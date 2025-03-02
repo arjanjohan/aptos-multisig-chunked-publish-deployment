@@ -2,12 +2,12 @@
 # Upgrades the hello world contract on Aptos testnet using multisig account
 
 # Get the object address
-OBJECT_ADDRESS=$(cat ./deployment/hello_world_object_address.txt)
+OBJECT_ADDRESS=$(tail -n 1 ./deployment/hello_world_object_address.txt)
 
 # Get address of owner 1
 OWNER_1=$(aptos account lookup-address --profile default | jq -r '.Result')
 
-# Get address of owner 2 
+# Get address of owner 2
 OWNER_2=$(aptos account lookup-address --profile owner_2 | jq -r '.Result')
 
 # Get private key of owner 2
@@ -30,12 +30,25 @@ echo "📦 Building publish payload..."
 aptos move build-publish-payload \
     --named-addresses multisig_code=$OBJECT_ADDRESS \
     --json-output-file publication.json \
+    --chunked-publish \
     --assume-yes
 
 # Modify the function ID in the publication.json
 echo "🔧 Modifying function ID in payload..."
 TMP_FILE=$(mktemp)
-jq '.function_id = "0x1::object_code_deployment::upgrade"' publication.json > "$TMP_FILE" && mv "$TMP_FILE" publication.json
+jq '.function_id = "0xe1ca3011bdd07246d4d16d909dbb2d6953a86c4735d5acf5865d962c630cce7::large_packages::stage_code_chunk_and_upgrade_object_code"' publication.json > "$TMP_FILE" && mv "$TMP_FILE" publication.json
+
+# Add object address to args at the correct position (after the first array and before the second)
+echo "🔧 Adding object address to payload args..."
+TMP_FILE=$(mktemp)
+jq --arg addr "$OBJECT_ADDRESS" '
+  # Get the first argument
+  .args[0] as $first_arg |
+  # Get all arguments after the first one
+  .args[1:] as $rest_args |
+  # Replace args with: first arg, new address arg, then rest of args
+  .args = [$first_arg, {type: "u8", value: [0,1,2,3,4]}] + $rest_args
+' publication.json > "$TMP_FILE" && mv "$TMP_FILE" publication.json
 
 # Add object address to args if not present
 echo "🔧 Adding object address to payload args..."

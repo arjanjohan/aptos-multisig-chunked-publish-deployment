@@ -7,11 +7,11 @@ set -e
 # Get address of owner 1
 OWNER_1=$(aptos account lookup-address --profile default | jq -r '.Result')
 
-# Get address of owner 2 
+# Get address of owner 2
 OWNER_2=$(aptos account lookup-address --profile owner_2 | jq -r '.Result')
 
 # Get the object address
-OBJECT_ADDRESS=$(cat ./deployment/hello_world_object_address.txt)
+OBJECT_ADDRESS=$(tail -n 1 ./deployment/hello_world_object_address.txt)
 
 # Get the multisig address
 MULTISIG_ADDRESS=$(cat ./keys/multisig_address)
@@ -32,4 +32,4 @@ echo "   - Multisig Owner: $MULTISIG_ADDRESS"
 echo "   - Multisig Owners: $OWNER_1, $OWNER_2"
 echo "🔍 View on Explorer:"
 echo "   - Code Object: https://explorer.aptoslabs.com/object/$OBJECT_ADDRESS"
-echo "   - Multisig Account: https://explorer.aptoslabs.com/account/$MULTISIG_ADDRESS" 
+echo "   - Multisig Account: https://explorer.aptoslabs.com/account/$MULTISIG_ADDRESS"

@@ -20,6 +20,7 @@ echo "📦 Publishing to testnet..."
 aptos move deploy-object \
     --address-name multisig_code \
     --profile default \
+    --chunked-publish \
     --assume-yes | tee /dev/tty | grep -o "0x[a-fA-F0-9]\+" > ./deployment/hello_world_object_address.txt || {
     echo "❌ Publishing failed"
     exit 1
@@ -28,7 +29,7 @@ aptos move deploy-object \
 echo "✅ Contract successfully published on Aptos testnet!"
 
 # Get the object address
-OBJECT_ADDRESS=$(cat ./deployment/hello_world_object_address.txt)
+OBJECT_ADDRESS=$(tail -n 1 ./deployment/hello_world_object_address.txt)
 
 # Print helpful information
 echo "🔍 View your contract on Explorer:"
