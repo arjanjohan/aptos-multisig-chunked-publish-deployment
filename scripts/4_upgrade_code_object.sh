@@ -30,7 +30,7 @@ echo "📦 Building publish payload..."
 aptos move build-publish-payload \
     --named-addresses multisig_code=$OBJECT_ADDRESS \
     --json-output-file publication.json \
-    --chunked-publish \
+        --chunked-publish \
     --assume-yes
 
 # Modify the function ID in the publication.json
@@ -41,13 +41,17 @@ jq '.function_id = "0xe1ca3011bdd07246d4d16d909dbb2d6953a86c4735d5acf5865d962c63
 # Add object address to args at the correct position (after the first array and before the second)
 echo "🔧 Adding object address to payload args..."
 TMP_FILE=$(mktemp)
-jq --arg addr "$OBJECT_ADDRESS" '
+jq '
   # Get the first argument
   .args[0] as $first_arg |
   # Get all arguments after the first one
   .args[1:] as $rest_args |
-  # Replace args with: first arg, new address arg, then rest of args
-  .args = [$first_arg, {type: "u8", value: [0,1,2,3,4]}] + $rest_args
+  # Get length of next array argument
+  (.args[2].value | length) as $next_array_length |
+  # Create single-item array to match length
+  [0] as $indices |
+  # Replace args with: first arg, new address arg with matching length, then rest of args
+  .args = [$first_arg, {type: "u16", value: $indices}] + $rest_args
 ' publication.json > "$TMP_FILE" && mv "$TMP_FILE" publication.json
 
 # Add object address to args if not present
