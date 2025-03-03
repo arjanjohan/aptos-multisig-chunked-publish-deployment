@@ -14,9 +14,10 @@ trap 'handle_error $LINENO' ERR
 
 # Define constants for easier configuration
 PACKAGE_ADDRESS="0xe1ca3011bdd07246d4d16d909dbb2d6953a86c4735d5acf5865d962c630cce7"
-CHUNK_SIZE=6
+DEFAULT_CHUNK_SIZE=6
 SLEEP_BETWEEN_TXS=2
 DELETE_AFTER_PROCESSING=true
+CHUNK_SIZES_FILE="./config/chunk_sizes.json"
 
 # Get the object address
 OBJECT_ADDRESS=$(tail -n 1 ./deployment/hello_world_object_address.txt)
@@ -34,6 +35,22 @@ OWNER_2_PK=$(cat ./keys/owner_2)
 MULTISIG_ADDRESS=$(cat ./keys/multisig_address)
 
 echo "🚀 Upgrading contract on Aptos testnet at address $OBJECT_ADDRESS..."
+
+# Function to get chunk sizes from file
+get_chunk_sizes() {
+  # Read chunk sizes from file
+  if [ -f "$CHUNK_SIZES_FILE" ]; then
+    # Read the file content and log it
+    local sizes_json=$(cat "$CHUNK_SIZES_FILE")
+    echo "📊 Using chunk sizes: $sizes_json" >&2
+
+    # Extract the array values and return them
+    jq -r '.[]' "$CHUNK_SIZES_FILE"
+  else
+    echo "⚠️ No chunk sizes file found, using default: $DEFAULT_CHUNK_SIZE" >&2
+    echo "$DEFAULT_CHUNK_SIZE"
+  fi
+}
 
 # Compile the contract, note that the named address is the object address
 echo "📝 Compiling Move modules..."
@@ -66,38 +83,79 @@ jq '
   .args = [$first_arg, {type: "u16", value: $indices}] + $rest_args
 ' publication.json > "$TMP_FILE" && mv "$TMP_FILE" publication.json
 
-# Split the publication.json into multiple files with a maximum of $CHUNK_SIZE items per array
+# Split the publication.json into multiple files with chunk sizes from previous transactions
 echo "📄 Splitting publication.json into chunked files..."
 
 # Get the total number of items in the arrays
 TOTAL_ITEMS=$(jq '.args[1].value | length' publication.json)
 echo "Total items in arrays: $TOTAL_ITEMS"
 
-# Calculate the number of chunks needed (ceiling division)
-CHUNKS=$(( ($TOTAL_ITEMS + $CHUNK_SIZE - 1) / $CHUNK_SIZE ))
-echo "Creating $CHUNKS chunked files with maximum $CHUNK_SIZE items per array"
+# Get chunk sizes from file - store in an array
+readarray -t CHUNK_SIZES < <(get_chunk_sizes)
+
+# Calculate chunks based on the determined chunk sizes
+calculate_chunks() {
+  local total=$1
+  local sizes=("${!2}")
+  local chunks=0
+  local remaining=$total
+  local i=0
+
+  # If no sizes were provided, use the default
+  if [ ${#sizes[@]} -eq 0 ]; then
+    sizes=($DEFAULT_CHUNK_SIZE)
+  fi
+
+  while [ $remaining -gt 0 ]; do
+    local size=${sizes[$i % ${#sizes[@]}]}
+    if [ $remaining -lt $size ]; then
+      size=$remaining
+    fi
+    remaining=$((remaining - size))
+    chunks=$((chunks + 1))
+    i=$((i + 1))
+  done
+
+  echo $chunks
+}
+
+# Calculate the number of chunks needed based on the chunk sizes
+CHUNKS=$(calculate_chunks $TOTAL_ITEMS CHUNK_SIZES[@])
+echo "Creating $CHUNKS chunked files based on determined chunk sizes"
 
 # Create each chunked file
+CURRENT_IDX=0
 for ((i=0; i<$CHUNKS; i++)); do
   # Add progress reporting
   echo "🔄 Processing chunk $((i+1)) of $CHUNKS ($(( (i+1) * 100 / CHUNKS ))%)"
 
-  START_IDX=$((i * $CHUNK_SIZE))
-  END_IDX=$(((i + 1) * $CHUNK_SIZE))
+  # Determine chunk size for this chunk
+  # If no sizes were provided, use the default
+  if [ ${#CHUNK_SIZES[@]} -eq 0 ]; then
+    CHUNK_SIZE=$DEFAULT_CHUNK_SIZE
+  else
+    CHUNK_SIZE=${CHUNK_SIZES[$i % ${#CHUNK_SIZES[@]}]}
+  fi
 
-  # If END_IDX is greater than TOTAL_ITEMS, adjust it
-  if [ $END_IDX -gt $TOTAL_ITEMS ]; then
+  # If this would exceed total items, adjust the chunk size
+  if [ $((CURRENT_IDX + CHUNK_SIZE)) -gt $TOTAL_ITEMS ]; then
+    CHUNK_SIZE=$((TOTAL_ITEMS - CURRENT_IDX))
+  fi
+
+  echo "📊 Using chunk size: $CHUNK_SIZE for items $CURRENT_IDX to $((CURRENT_IDX + CHUNK_SIZE - 1))"
+
+  START_IDX=$CURRENT_IDX
+  END_IDX=$((CURRENT_IDX + CHUNK_SIZE))
+
+  # Determine if this is the last chunk
+  IS_LAST_CHUNK=false
+  if [ $END_IDX -ge $TOTAL_ITEMS ]; then
+    IS_LAST_CHUNK=true
     END_IDX=$TOTAL_ITEMS
   fi
 
   # Calculate the length for this chunk
   CHUNK_LENGTH=$((END_IDX - START_IDX))
-
-  # Determine if this is the last chunk
-  IS_LAST_CHUNK=false
-  if [ $i -eq $(($CHUNKS - 1)) ]; then
-    IS_LAST_CHUNK=true
-  fi
 
   # Set the appropriate function ID based on whether this is the last chunk
   if [ "$IS_LAST_CHUNK" = true ]; then
@@ -147,18 +205,28 @@ for ((i=0; i<$CHUNKS; i++)); do
 
   # Move the temporary file to the final destination
   mv "$TMP_FILE" "chunked-publication-$CHUNK_NUM.json"
-  echo "✅ Created chunked-publication-$CHUNK_NUM.json with items $START_IDX to $((END_IDX-1))"
+
+  if [ "$IS_LAST_CHUNK" = true ]; then
+    echo "✅ Created chunked-publication-$CHUNK_NUM.json with items $START_IDX to $((END_IDX-1)) (with object address)"
+  else
+    echo "✅ Created chunked-publication-$CHUNK_NUM.json with items $START_IDX to $((END_IDX-1))"
+  fi
+
+  # Update current index for next chunk
+  CURRENT_IDX=$END_IDX
 done
 
 # We can now delete the original publication.json as we'll use the chunked files
 echo "🗑️ Removing original publication.json file..."
 rm publication.json
+
 # Process each chunked file
 echo "🔄 Processing each chunked file..."
 PROCESSED_CHUNKS=0
 SUCCESSFUL_CHUNKS=0
 FAILED_CHUNKS=0
 LAST_TX_HASH=""
+
 for CHUNKED_FILE in chunked-publication-*.json; do
   PROCESSED_CHUNKS=$((PROCESSED_CHUNKS + 1))
   echo "📄 Processing $CHUNKED_FILE ($PROCESSED_CHUNKS of $CHUNKS)..."
@@ -188,6 +256,7 @@ for CHUNKED_FILE in chunked-publication-*.json; do
 
   echo "📝 Transaction hash: $TX_HASH"
   echo "$TX_HASH" > "./deployment/last_multisig_tx_$(basename "$CHUNKED_FILE" .json).txt"
+
   LAST_TX_HASH="$TX_HASH"
 
   # Approve transaction from owner 2
@@ -204,7 +273,6 @@ for CHUNKED_FILE in chunked-publication-*.json; do
     --multisig-address $MULTISIG_ADDRESS \
     --json-file "$CHUNKED_FILE" \
     --assume-yes
-
 
   echo "✅ Successfully processed $CHUNKED_FILE"
   echo "-------------------------------------------"
@@ -229,6 +297,7 @@ echo "📊 Summary:"
 echo "- Total chunks processed: $PROCESSED_CHUNKS of $CHUNKS"
 echo "- Successful transactions: $SUCCESSFUL_CHUNKS"
 echo "- Failed transactions: $FAILED_CHUNKS"
+echo "- Chunk sizes used: ${CHUNK_SIZES[*]}"
 echo "- Object address: $OBJECT_ADDRESS"
 echo "- Multisig address: $MULTISIG_ADDRESS"
 echo "- Last transaction hash: $LAST_TX_HASH"
