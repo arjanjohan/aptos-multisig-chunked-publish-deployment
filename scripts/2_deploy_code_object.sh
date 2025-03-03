@@ -26,10 +26,26 @@ aptos move deploy-object \
     exit 1
 }
 
+
+
 echo "✅ Contract successfully published on Aptos testnet!"
 
 # Get the object address
 OBJECT_ADDRESS=$(tail -n 1 ./deployment/hello_world_object_address.txt)
+
+
+# Unneeded upgrade to see payload // TODO: Remove this one
+echo "📦 Upgrading deployed object to testnet..."
+aptos move upgrade-object \
+    --address-name multisig_code \
+    --object-address $OBJECT_ADDRESS \
+    --profile default \
+    --chunked-publish \
+    --assume-yes|| {
+    echo "❌ Upgrade failed"
+    exit 1
+}
+
 
 # Print helpful information
 echo "🔍 View your contract on Explorer:"
