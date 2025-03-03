@@ -1,4 +1,4 @@
-module multisig_code::hello_world {
+module multisig_code::hello_world2 {
     use std::string;
     use std::signer;
     use std::error;
