@@ -7,7 +7,7 @@ module multisig_code::hello_world {
     const ENOT_INITIALIZED: u64 = 1;
     const ENOT_ALLOWED: u64 = 2;
 
-    // Add lots of unused constants to increase file size
+    // Unused constants to increase file size
     const UNUSED_1: u64 = 100000000000000000;
     const UNUSED_2: u64 = 200000000000000000;
     const UNUSED_3: u64 = 300000000000000000;
@@ -19,12 +19,10 @@ module multisig_code::hello_world {
     const UNUSED_9: u64 = 900000000000000000;
     const UNUSED_10: u64 = 1000000000000000000;
 
-    // Add lots of unused strings to increase file size
+    // Unused strings to increase file size
     const LONG_STRING_1: vector<u8> = b"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
     const LONG_STRING_2: vector<u8> = b"Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.";
     const LONG_STRING_3: vector<u8> = b"At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga.";
-    // Add more long strings to increase size further
-
     const LONG_STRING_4: vector<u8> = b"Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?";
     const LONG_STRING_5: vector<u8> = b"Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.";
     const LONG_STRING_6: vector<u8> = b"On the other hand, we denounce with righteous indignation and dislike men who are so beguiled and demoralized by the charms of pleasure of the moment, so blinded by desire, that they cannot foresee the pain and trouble that are bound to ensue; and equal blame belongs to those who fail in their duty through weakness of will, which is the same as saying through shrinking";
@@ -107,8 +105,6 @@ module multisig_code::hello_world {
         array: vector<u8>,
     }
 
-
-
     /// Initialize the module with default greeting
     fun init_module(admin: &signer) {
         let admin_addr = signer::address_of(admin);
@@ -126,8 +122,9 @@ module multisig_code::hello_world {
         let message = borrow_global_mut<Message>(@multisig_code);
         message.text = new_message;
     }
-    /// Get the current greeting message
+
     #[view]
+    /// Get the current greeting message
     public fun get_message(): string::String
     acquires Message {
         let message = borrow_global<Message>(@multisig_code);
@@ -317,5 +314,404 @@ module multisig_code::hello_world {
 
     fun unused_function_46(): vector<u8> {
         LONG_STRING_46
+    }
+    fun unused_function_bool_1(next_string: bool): vector<u8> {
+        if (next_string) {
+            LONG_STRING_1
+        } else {
+            LONG_STRING_2
+        }
+    }
+
+    fun unused_function_bool_2(next_string: bool): vector<u8> {
+        if (next_string) {
+            LONG_STRING_1
+        } else {
+            LONG_STRING_2
+        }
+    }
+
+    fun unused_function_bool_3(next_string: bool): vector<u8> {
+        if (next_string) {
+            LONG_STRING_1
+        } else {
+            LONG_STRING_2
+        }
+    }
+
+    fun unused_function_bool_4(next_string: bool): vector<u8> {
+        if (next_string) {
+            LONG_STRING_1
+        } else {
+            LONG_STRING_2
+        }
+    }
+
+    fun unused_function_bool_5(next_string: bool): vector<u8> {
+        if (next_string) {
+            LONG_STRING_1
+        } else {
+            LONG_STRING_2
+        }
+    }
+
+    fun unused_function_bool_6(next_string: bool): vector<u8> {
+        if (next_string) {
+            LONG_STRING_1
+        } else {
+            LONG_STRING_2
+        }
+    }
+
+    fun unused_function_bool_7(next_string: bool): vector<u8> {
+        if (next_string) {
+            LONG_STRING_1
+        } else {
+            LONG_STRING_2
+        }
+    }
+
+    fun unused_function_bool_8(next_string: bool): vector<u8> {
+        if (next_string) {
+            LONG_STRING_1
+        } else {
+            LONG_STRING_2
+        }
+    }
+
+    fun unused_function_bool_9(next_string: bool): vector<u8> {
+        if (next_string) {
+            LONG_STRING_1
+        } else {
+            LONG_STRING_2
+        }
+    }
+
+    fun unused_function_bool_10(next_string: bool): vector<u8> {
+        if (next_string) {
+            LONG_STRING_1
+        } else {
+            LONG_STRING_2
+        }
+    }
+
+    fun unused_function_bool_11(next_string: bool): vector<u8> {
+        if (next_string) {
+            LONG_STRING_1
+        } else {
+            LONG_STRING_2
+        }
+    }
+
+    fun unused_function_bool_12(next_string: bool): vector<u8> {
+        if (next_string) {
+            LONG_STRING_1
+        } else {
+            LONG_STRING_2
+        }
+    }
+
+    fun unused_function_bool_13(next_string: bool): vector<u8> {
+        if (next_string) {
+            LONG_STRING_1
+        } else {
+            LONG_STRING_2
+        }
+    }
+
+    fun unused_function_bool_14(next_string: bool): vector<u8> {
+        if (next_string) {
+            LONG_STRING_1
+        } else {
+            LONG_STRING_2
+        }
+    }
+
+    fun unused_function_bool_15(next_string: bool): vector<u8> {
+        if (next_string) {
+            LONG_STRING_1
+        } else {
+            LONG_STRING_2
+        }
+    }
+
+    fun unused_function_bool_16(next_string: bool): vector<u8> {
+        if (next_string) {
+            LONG_STRING_1
+        } else {
+            LONG_STRING_2
+        }
+    }
+
+    fun unused_function_bool_17(next_string: bool): vector<u8> {
+        if (next_string) {
+            LONG_STRING_1
+        } else {
+            LONG_STRING_2
+        }
+    }
+
+    fun unused_function_bool_18(next_string: bool): vector<u8> {
+        if (next_string) {
+            LONG_STRING_1
+        } else {
+            LONG_STRING_2
+        }
+    }
+
+    fun unused_function_bool_19(next_string: bool): vector<u8> {
+        if (next_string) {
+            LONG_STRING_1
+        } else {
+            LONG_STRING_2
+        }
+    }
+
+    fun unused_function_bool_20(next_string: bool): vector<u8> {
+        if (next_string) {
+            LONG_STRING_1
+        } else {
+            LONG_STRING_2
+        }
+    }
+
+    fun unused_function_bool_21(next_string: bool): vector<u8> {
+        if (next_string) {
+            LONG_STRING_1
+        } else {
+            LONG_STRING_2
+        }
+    }
+
+    fun unused_function_bool_22(next_string: bool): vector<u8> {
+        if (next_string) {
+            LONG_STRING_1
+        } else {
+            LONG_STRING_2
+        }
+    }
+
+    fun unused_function_bool_23(next_string: bool): vector<u8> {
+        if (next_string) {
+            LONG_STRING_1
+        } else {
+            LONG_STRING_2
+        }
+    }
+
+    fun unused_function_bool_24(next_string: bool): vector<u8> {
+        if (next_string) {
+            LONG_STRING_1
+        } else {
+            LONG_STRING_2
+        }
+    }
+
+    fun unused_function_bool_25(next_string: bool): vector<u8> {
+        if (next_string) {
+            LONG_STRING_1
+        } else {
+            LONG_STRING_2
+        }
+    }
+
+    fun unused_function_bool_26(next_string: bool): vector<u8> {
+        if (next_string) {
+            LONG_STRING_1
+        } else {
+            LONG_STRING_2
+        }
+    }
+
+    fun unused_function_bool_27(next_string: bool): vector<u8> {
+        if (next_string) {
+            LONG_STRING_1
+        } else {
+            LONG_STRING_2
+        }
+    }
+
+    fun unused_function_bool_28(next_string: bool): vector<u8> {
+        if (next_string) {
+            LONG_STRING_1
+        } else {
+            LONG_STRING_2
+        }
+    }
+
+    fun unused_function_bool_29(next_string: bool): vector<u8> {
+        if (next_string) {
+            LONG_STRING_1
+        } else {
+            LONG_STRING_2
+        }
+    }
+
+    fun unused_function_bool_30(next_string: bool): vector<u8> {
+        if (next_string) {
+            LONG_STRING_1
+        } else {
+            LONG_STRING_2
+        }
+    }
+
+    fun unused_function_bool_31(next_string: bool): vector<u8> {
+        if (next_string) {
+            LONG_STRING_1
+        } else {
+            LONG_STRING_2
+        }
+    }
+
+    fun unused_function_bool_32(next_string: bool): vector<u8> {
+        if (next_string) {
+            LONG_STRING_1
+        } else {
+            LONG_STRING_2
+        }
+    }
+
+    fun unused_function_bool_33(next_string: bool): vector<u8> {
+        if (next_string) {
+            LONG_STRING_1
+        } else {
+            LONG_STRING_2
+        }
+    }
+
+    fun unused_function_bool_34(next_string: bool): vector<u8> {
+        if (next_string) {
+            LONG_STRING_1
+        } else {
+            LONG_STRING_2
+        }
+    }
+
+    fun unused_function_bool_35(next_string: bool): vector<u8> {
+        if (next_string) {
+            LONG_STRING_1
+        } else {
+            LONG_STRING_2
+        }
+    }
+
+    fun unused_function_bool_36(next_string: bool): vector<u8> {
+        if (next_string) {
+            LONG_STRING_1
+        } else {
+            LONG_STRING_2
+        }
+    }
+
+    fun unused_function_bool_37(next_string: bool): vector<u8> {
+        if (next_string) {
+            LONG_STRING_1
+        } else {
+            LONG_STRING_2
+        }
+    }
+
+    fun unused_function_bool_38(next_string: bool): vector<u8> {
+        if (next_string) {
+            LONG_STRING_1
+        } else {
+            LONG_STRING_2
+        }
+    }
+
+    fun unused_function_bool_39(next_string: bool): vector<u8> {
+        if (next_string) {
+            LONG_STRING_1
+        } else {
+            LONG_STRING_2
+        }
+    }
+
+    fun unused_function_bool_40(next_string: bool): vector<u8> {
+        if (next_string) {
+            LONG_STRING_1
+        } else {
+            LONG_STRING_2
+        }
+    }
+
+    fun unused_function_bool_41(next_string: bool): vector<u8> {
+        if (next_string) {
+            LONG_STRING_1
+        } else {
+            LONG_STRING_2
+        }
+    }
+
+    fun unused_function_bool_42(next_string: bool): vector<u8> {
+        if (next_string) {
+            LONG_STRING_1
+        } else {
+            LONG_STRING_2
+        }
+    }
+
+    fun unused_function_bool_43(next_string: bool): vector<u8> {
+        if (next_string) {
+            LONG_STRING_1
+        } else {
+            LONG_STRING_2
+        }
+    }
+
+    fun unused_function_bool_44(next_string: bool): vector<u8> {
+        if (next_string) {
+            LONG_STRING_1
+        } else {
+            LONG_STRING_2
+        }
+    }
+
+    fun unused_function_bool_45(next_string: bool): vector<u8> {
+        if (next_string) {
+            LONG_STRING_1
+        } else {
+            LONG_STRING_2
+        }
+    }
+
+    fun unused_function_bool_46(next_string: bool): vector<u8> {
+        if (next_string) {
+            LONG_STRING_1
+        } else {
+            LONG_STRING_2
+        }
+    }
+
+    fun unused_function_bool_47(next_string: bool): vector<u8> {
+        if (next_string) {
+            LONG_STRING_1
+        } else {
+            LONG_STRING_2
+        }
+    }
+
+    fun unused_function_bool_48(next_string: bool): vector<u8> {
+        if (next_string) {
+            LONG_STRING_1
+        } else {
+            LONG_STRING_2
+        }
+    }
+
+    fun unused_function_bool_49(next_string: bool): vector<u8> {
+        if (next_string) {
+            LONG_STRING_1
+        } else {
+            LONG_STRING_2
+        }
+    }
+
+    fun unused_function_bool_50(next_string: bool): vector<u8> {
+        if (next_string) {
+            LONG_STRING_1
+        } else {
+            LONG_STRING_2
+        }
     }
 }
