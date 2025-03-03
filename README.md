@@ -44,15 +44,29 @@ bash ./scripts/1_setup_multisig.sh
 
 Creates a 2-of-2 multisig account that will own and control the smart contract.
 
-### 2. Deploy Code Object
+### 2.1. Create Hello World Copies
 
 ```bash
-bash ./scripts/2_deploy_code_object.sh
+bash ./scripts/2_1_create_hello_world_copies.sh
+```
+
+This helper script creates copies of the `hello_world.move` module to increase the deployment size for testing chunked-publish. Change the `NUM_COPIES` value to increase or decrease the amount of copies to make.
+
+### 2.2. Deploy Code Object
+
+```bash
+bash ./scripts/2_2_deploy_code_object.sh
 ```
 
 Deploys the initial version of the Hello World contracts.
 
- TODO: Keep track of chunk size(s) here, to use in step 4
+### 2.3. Query Published Chunks
+
+```bash
+bash ./scripts/2_3_query_published_chunks.sh
+```
+
+Retrieves the payload of the chunked deployment transaction and stores the deployment chunk sizes in `config/chunk_sizes.json`. These values will be used in step 4 when creating a chunked upgrade transaction.
 
 ### 3. Transfer Code Object
 
@@ -62,21 +76,13 @@ bash ./scripts/3_transfer_code_object.sh
 
 Transfers ownership of the deployed contract to the multisig account.
 
-### 4. Upgrade Code Object (Optional)
+### 4. Upgrade Code Object
 
 ```bash
 bash ./scripts/4_upgrade_code_object.sh
 ```
 
-Demonstrates how to upgrade the contract through the multisig.
-
-### 5. Query the original chunked publish transactions, and retrieves the chunk sizes from it.
-
-```bash
-bash ./scripts/5_query_published_chunks.sh
-```
-
-Demonstrates how to upgrade the contract through the multisig.
+Demonstrates how to upgrade the contract through the multisig. The chunk sizes are determined by the values in `config/chunk_sizes.json`. Either run `./scripts/2_3_query_published_chunks.sh` to retrieve the values of the initial chunked publish, or modify this file to your needs.
 
 ## Smart Contract Details
 
