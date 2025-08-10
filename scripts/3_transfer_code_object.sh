@@ -4,6 +4,13 @@
 # Exit if any command fails
 set -e
 
+# Source the balance check helper
+source ./scripts/balance_check_helper.sh
+
+# Check balance before transferring
+echo "🔍 Checking account balance before transferring code object..."
+check_balance default
+
 # Get address of owner 1
 OWNER_1=$(aptos account lookup-address --profile default | jq -r '.Result')
 

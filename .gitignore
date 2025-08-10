@@ -14,4 +14,7 @@ keys
 
 publication.json
 
+sources/hello_world_*.move
+
 deployment/
+config/chunk_sizes.json

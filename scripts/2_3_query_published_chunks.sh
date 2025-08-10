@@ -1,5 +1,5 @@
 #!/bin/bash
-# Query transaction details from Aptos API for all transactions in hello_world_object_address.txt
+# Query transaction details from Aptos API for all transactions in deployment_transactions.txt
 
 # Exit immediately if a command exits with a non-zero status
 set -e
@@ -14,7 +14,7 @@ trap 'handle_error $LINENO' ERR
 
 # Define constants
 API_BASE_URL="https://api.testnet.aptoslabs.com/v1"
-TRANSACTION_FILE="./deployment/hello_world_object_address.txt"
+TRANSACTION_FILE="./deployment/deployment_transactions.txt"
 OUTPUT_DIR="./deployment/transaction_data"
 CHUNK_SIZES_FILE="./config/chunk_sizes.json"
 

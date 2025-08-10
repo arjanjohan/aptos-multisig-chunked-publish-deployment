@@ -1,6 +1,13 @@
 #!/bin/bash
 # Setup multisig account
 
+# Source the balance check helper
+source ./scripts/balance_check_helper.sh
+
+# Check balances before proceeding
+echo "🔍 Checking account balances before creating multisig..."
+check_multiple_balances default owner_2
+
 # Get address of owner 1
 OWNER_1=$(aptos account lookup-address --profile default | jq -r '.Result')
 
@@ -47,4 +54,4 @@ echo "$MULTISIG_ADDRESS" > ./keys/multisig_address
 echo "✅ Multisig account created successfully!"
 echo "📝 Multisig Address: $MULTISIG_ADDRESS"
 echo "🔑 Number of owners: 2"
-echo "✍️  Required signatures: 2" 
+echo "✍️  Required signatures: 2"
