@@ -8,7 +8,6 @@ set -e
 source ./scripts/balance_check_helper.sh
 
 # Check balance before publishing
-echo "🔍 Checking account balance before publishing..."
 check_balance default
 
 echo "🚀 Publishing contract to Aptos testnet..."

@@ -7,6 +7,9 @@ set -e
 # Source the balance check helper
 source ./scripts/balance_check_helper.sh
 
+# Source the pending transactions helper
+source ./scripts/clear_pending_transactions.sh
+
 # Function to handle errors
 handle_error() {
   echo "❌ Error occurred at line $1"
@@ -16,8 +19,20 @@ handle_error() {
 trap 'handle_error $LINENO' ERR
 
 # Check balance before upgrading
-echo "🔍 Checking account balance before upgrading code object..."
 check_balance owner_2
+
+# Check for pending transactions before proceeding
+echo "🔍 Checking for pending transactions in multisig..."
+MULTISIG_ADDRESS=$(cat ./keys/multisig_address)
+
+if check_pending_transactions "$MULTISIG_ADDRESS"; then
+  echo "❌ Found pending transactions in multisig account"
+  echo "   Please clear pending transactions before proceeding with upgrade"
+  echo "   You can use: source ./scripts/clear_pending_transactions.sh && clear_pending_transactions $MULTISIG_ADDRESS owner_2"
+  exit 1
+fi
+
+echo "✅ No pending transactions found, proceeding with upgrade..."
 
 # Define constants for easier configuration
 PACKAGE_ADDRESS="0xe1ca3011bdd07246d4d16d909dbb2d6953a86c4735d5acf5865d962c630cce7"

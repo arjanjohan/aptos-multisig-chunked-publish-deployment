@@ -5,7 +5,6 @@
 source ./scripts/balance_check_helper.sh
 
 # Check balances before proceeding
-echo "🔍 Checking account balances before creating multisig..."
 check_multiple_balances default owner_2
 
 # Get address of owner 1

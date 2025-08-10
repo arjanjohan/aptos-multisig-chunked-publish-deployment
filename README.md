@@ -36,6 +36,8 @@ This script will:
 - Generate two owner keys for the multisig
 - Initialize Aptos CLI with the generated keys
 
+**Note:** You will be prompted to fund the new testnet accounts from the faucet. Make sure to do this otherwise the next scripts will not work. Each account needs at least 0.1 APT for deployment operations.
+
 ### 1. Setup Multisig
 
 ```bash
@@ -83,6 +85,8 @@ bash ./scripts/4_upgrade_code_object.sh
 ```
 
 Demonstrates how to upgrade the contract through the multisig. The chunk sizes are determined by the values in `config/chunk_sizes.json`. Either run `./scripts/2_3_query_published_chunks.sh` to retrieve the values of the initial chunked publish, or modify this file to your needs.
+
+**Note:** If this script fails midway, any pending multisig transaction will break the next run of the script. If this is the case, run the `./scripts/clear_pending_transactions.sh` script to reject any open multisig transactions.
 
 ## Smart Contract Details
 

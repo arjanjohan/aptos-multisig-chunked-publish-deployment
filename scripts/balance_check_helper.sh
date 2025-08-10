@@ -10,8 +10,6 @@ check_balance() {
     # Minimum balance required: 0.1 APT = 1000000 octas
     local MIN_BALANCE=1000000
 
-    echo "💰 Checking balance for profile: $profile..."
-
     # Get account balance
     local balance_response
     balance_response=$(aptos account balance --profile "$profile" 2>/dev/null)
@@ -32,8 +30,6 @@ check_balance() {
         exit 1
     fi
 
-    echo "   Current balance: $balance octas ($(echo "scale=6; $balance / 100000000" | bc) APT)"
-
     # Check if balance is sufficient
     if [ "$balance" -lt "$MIN_BALANCE" ]; then
         echo "❌ Insufficient balance for $profile"
@@ -43,9 +39,6 @@ check_balance() {
         exit 1
     fi
 
-    echo "✅ Sufficient balance confirmed for $profile"
-    echo "   Available: $balance octas ($(echo "scale=6; $balance / 100000000" | bc) APT)"
-    echo ""
 }
 
 # Function to check multiple account balances
@@ -60,8 +53,6 @@ check_multiple_balances() {
         check_balance "$profile" "$profile"
     done
 
-    echo "🎉 All account balances verified successfully!"
-    echo ""
 }
 
 # If script is run directly, show usage
@@ -73,7 +64,7 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
     echo "  check_multiple_balances <profile1> <profile2> ..."
     echo ""
     echo "Examples:"
-    echo "  check_balance default
+    echo "  check_balance default"
     echo "  check_multiple_balances default owner_2"
     echo ""
     echo "Note: This script should be sourced, not executed directly"

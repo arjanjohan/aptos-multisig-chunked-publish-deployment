@@ -8,7 +8,6 @@ set -e
 source ./scripts/balance_check_helper.sh
 
 # Check balance before transferring
-echo "🔍 Checking account balance before transferring code object..."
 check_balance default
 
 # Get address of owner 1
